@@ -1,47 +1,81 @@
+
 import React from 'react';
-import { SpellCorrection } from '../types';
+import { Correction } from '../types';
 
 interface CorrectionCardProps {
-  correction: SpellCorrection;
-  onApply: (correction: SpellCorrection) => void;
+  correction: Correction;
 }
 
-const CorrectionCard: React.FC<CorrectionCardProps> = ({ correction, onApply }) => {
-  const typeStyles = {
-    spelling: 'bg-rose-100 text-rose-700 border-rose-200',
-    grammar: 'bg-amber-100 text-amber-700 border-amber-200',
-    style: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+const CorrectionCard: React.FC<CorrectionCardProps> = ({ correction }) => {
+  const typeColors = {
+    'អក្ខរាវិរុទ្ធ': {
+      bg: 'bg-red-50/80',
+      border: 'border-red-200',
+      text: 'text-red-700',
+      badge: 'bg-red-500',
+      accent: 'border-red-100'
+    },
+    'វេយ្យាករណ៍': {
+      bg: 'bg-orange-50/80',
+      border: 'border-orange-200',
+      text: 'text-orange-700',
+      badge: 'bg-orange-500',
+      accent: 'border-orange-100'
+    },
+    'កម្រិតភាសា': {
+      bg: 'bg-blue-50/80',
+      border: 'border-blue-200',
+      text: 'text-blue-700',
+      badge: 'bg-blue-500',
+      accent: 'border-blue-100'
+    },
   };
 
-  const typeLabels = {
-    spelling: 'អក្ខរាវិរុទ្ធ',
-    grammar: 'វេយ្យាករណ៍',
-    style: 'រចនាបថ',
-  };
+  const style = typeColors[correction.type];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group">
-      <div className="flex justify-between items-start mb-3">
-        <span className={`text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider border ${typeStyles[correction.type]}`}>
-          {typeLabels[correction.type] || correction.type}
+    <div className={`p-6 mb-4 border-l-4 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 ${style.bg} ${style.border}`}>
+      <div className="flex justify-between items-center mb-4">
+        <span className={`text-[10px] font-black uppercase tracking-widest text-white px-3 py-1 rounded-full ${style.badge} shadow-sm`}>
+          {correction.type}
         </span>
-        <button 
-          onClick={() => onApply(correction)}
-          className="text-indigo-600 hover:text-indigo-800 text-xs font-bold transition-colors khmer-font"
-        >
-          {"អនុវត្ត"}
-        </button>
       </div>
       
-      <div className="flex items-center flex-wrap gap-2 mb-3 bg-slate-50 p-2 rounded-xl">
-        <span className="line-through text-slate-400 khmer-font text-sm">{correction.originalText}</span>
-        <span className="text-slate-300 font-bold">{"→"}</span>
-        <span className="text-teal-600 font-black khmer-font text-base">{correction.suggestedText}</span>
+      <div className="flex flex-wrap items-center gap-4 mb-4">
+        <div className="relative group">
+          <span className="line-through text-slate-400 text-xl font-medium px-2 py-1 rounded bg-white/50 border border-slate-100">
+            {correction.original}
+          </span>
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            ពាក្យសរសេរខុស
+          </div>
+        </div>
+        
+        <div className="text-slate-300 animate-pulse">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+          </svg>
+        </div>
+
+        <div className="relative">
+          <span className={`font-black text-2xl px-3 py-1 rounded-xl bg-white shadow-sm border border-white ${style.text}`}>
+            {correction.correction}
+          </span>
+          <div className="absolute -top-1 -right-1 flex h-3 w-3">
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${style.badge}`}></span>
+            <span className={`relative inline-flex rounded-full h-3 w-3 ${style.badge}`}></span>
+          </div>
+        </div>
       </div>
       
-      <p className="text-xs text-slate-500 khmer-font leading-relaxed italic">
-        {correction.reason}
-      </p>
+      <div className={`mt-3 p-4 rounded-xl border ${style.accent} bg-white/40`}>
+        <div className="flex items-start gap-3">
+          <div className={`mt-1 h-1.5 w-1.5 rounded-full shrink-0 ${style.badge}`}></div>
+          <p className="text-[15px] leading-relaxed font-medium text-slate-700/90 italic">
+            {correction.explanation}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

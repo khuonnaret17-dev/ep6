@@ -1,5 +1,5 @@
 {
-  "name": "កម្មវិធីពិនិត្យអក្ខរាវិរុទ្ធ",
+  "name": "khmer-linguist-expert",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react-dom": "^19.2.3",
     "@google/genai": "^1.34.0",
+    "react-dom": "^19.2.3",
     "react": "^19.2.3"
   },
   "devDependencies": {

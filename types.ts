@@ -1,21 +1,21 @@
 
-export interface SpellCorrection {
-  originalText: string;
-  suggestedText: string;
-  reason: string;
-  type: 'spelling' | 'grammar' | 'style';
+export interface Correction {
+  original: string;
+  correction: string;
+  explanation: string;
+  type: 'អក្ខរាវិរុទ្ធ' | 'វេយ្យាករណ៍' | 'កម្រិតភាសា';
 }
 
 export interface AnalysisResult {
-  corrections: SpellCorrection[];
-  summary: string;
-  isCorrect: boolean;
-  improvedText: string;
+  corrections: Correction[];
+  suggestions: string;
+  overallFeedback: string;
+  languageLevel: string;
 }
 
-export interface HistoryItem {
-  id: string;
-  timestamp: number;
-  text: string;
-  result: AnalysisResult;
+export enum AnalysisStatus {
+  IDLE = 'IDLE',
+  LOADING = 'LOADING',
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR'
 }
