@@ -37,6 +37,7 @@ const SCHEMA = {
 };
 
 export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> => {
+  // Accessing API KEY from environment directly for Vercel compatibility
   const apiKey = process.env.API_KEY;
   
   if (!apiKey) {
@@ -47,29 +48,35 @@ export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> =>
     throw new Error("EMPTY_TEXT");
   }
 
-  // Always create a fresh instance with the current API key
+  // Use the recommended model for text processing
+  const modelName = 'gemini-3-flash-preview';
   const ai = new GoogleGenAI({ apiKey });
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Please analyze the following Khmer text for spelling, grammar, and style errors. Provide a list of specific corrections and an overall improved version.
-      
-      Text to analyze: "${text}"`,
+      model: modelName,
+      contents: [{
+        parts: [{
+          text: `សូមពិនិត្យអក្ខរាវិរុទ្ធ និងវេយ្យាករណ៍ភាសាខ្មែរសម្រាប់អត្ថបទខាងក្រោម៖
+          
+          អត្ថបទ៖ "${text}"`
+        }]
+      }],
       config: {
-        systemInstruction: "You are a professional Khmer linguist and editor. Your goal is to help users write perfect Khmer. Identify errors accurately and provide helpful explanations in Khmer language. Always ensure the output is valid JSON according to the schema.",
+        systemInstruction: "You are a senior Khmer language expert and editor. Provide precise spelling and grammar corrections. Ensure the response matches the JSON schema exactly. Explanations must be in Khmer.",
         responseMimeType: "application/json",
         responseSchema: SCHEMA,
       },
     });
 
-    const result = JSON.parse(response.text);
+    const jsonStr = response.text?.trim() || "{}";
+    const result = JSON.parse(jsonStr);
     return result as AnalysisResult;
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    if (error.status === 401 || error.status === 403 || (error.message && error.message.includes('API key'))) {
+    if (error.status === 401 || error.status === 403 || error.message?.includes('API key')) {
       throw new Error("INVALID_API_KEY");
     }
-    throw error;
+    throw new Error("API_FAILURE");
   }
 };
