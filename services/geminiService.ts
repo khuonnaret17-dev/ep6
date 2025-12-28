@@ -38,18 +38,12 @@ const SCHEMA = {
 };
 
 export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> => {
-  const apiKey = process.env.API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("MISSING_API_KEY");
-  }
-
   if (!text.trim()) {
-    throw new Error("EMPTY_TEXT");
+    throw new Error("Text is empty");
   }
 
-  // Always create a fresh instance to ensure latest key is used
-  const ai = new GoogleGenAI({ apiKey });
+  // Guidelines: Create a new GoogleGenAI instance right before making an API call
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
   try {
     const response = await ai.models.generateContent({
@@ -67,13 +61,8 @@ export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> =>
     const result = JSON.parse(response.text);
     return result as AnalysisResult;
   } catch (error: any) {
-    console.error("Gemini API Error details:", error);
-    
-    // Check for specific error status codes
-    if (error.status === 401 || error.status === 403) {
-      throw new Error("INVALID_API_KEY");
-    }
-    
+    console.error("Gemini API Error:", error);
+    // Rethrow to handle in the UI
     throw error;
   }
 };
