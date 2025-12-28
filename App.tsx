@@ -161,7 +161,7 @@ const App: React.FC = () => {
                 <div className="flex-1">
                   <h4 className="text-amber-200 font-bold khmer-font mb-2 text-lg">រកមិនឃើញ API Key (Vercel Setting)</h4>
                   <p className="text-amber-100/80 text-sm khmer-font leading-relaxed mb-4">
-                    កម្មវិធីនេះត្រូវការ API Key ដើម្បីដំណើរការ។ ប្រសិនបើអ្នកកំពុងប្រើលើ Vercel សូមចូលទៅកាន់ Dashboard -> Settings -> Environment Variables រួចបន្ថែម Key ឈ្មោះ <span className="font-mono bg-black/30 px-2 py-0.5 rounded text-white">API_KEY</span> ។
+                    កម្មវិធីនេះត្រូវការ API Key ដើម្បីដំណើរការ។ ប្រសិនបើអ្នកកំពុងប្រើលើ Vercel សូមចូលទៅកាន់ Dashboard → Settings → Environment Variables រួចបន្ថែម Key ឈ្មោះ <span className="font-mono bg-black/30 px-2 py-0.5 rounded text-white">API_KEY</span> ។
                   </p>
                   <button onClick={handleOpenKey} className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-bold khmer-font transition-all shadow-lg">
                     ព្យាយាមភ្ជាប់ម្តងទៀត (Connect AI)
