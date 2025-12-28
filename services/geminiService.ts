@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult } from "../types";
 
@@ -38,12 +37,18 @@ const SCHEMA = {
 };
 
 export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> => {
-  if (!text.trim()) {
-    throw new Error("Text is empty");
+  const apiKey = process.env.API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("MISSING_API_KEY");
   }
 
-  // Guidelines: Create a new GoogleGenAI instance right before making an API call
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+  if (!text.trim()) {
+    throw new Error("EMPTY_TEXT");
+  }
+
+  // Always create a fresh instance with the current API key
+  const ai = new GoogleGenAI({ apiKey });
 
   try {
     const response = await ai.models.generateContent({
@@ -52,7 +57,7 @@ export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> =>
       
       Text to analyze: "${text}"`,
       config: {
-        systemInstruction: "You are a professional Khmer linguist and editor. Your goal is to help users write perfect Khmer. Identify errors accurately and provide helpful explanations in Khmer language.",
+        systemInstruction: "You are a professional Khmer linguist and editor. Your goal is to help users write perfect Khmer. Identify errors accurately and provide helpful explanations in Khmer language. Always ensure the output is valid JSON according to the schema.",
         responseMimeType: "application/json",
         responseSchema: SCHEMA,
       },
@@ -62,7 +67,9 @@ export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> =>
     return result as AnalysisResult;
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    // Rethrow to handle in the UI
+    if (error.status === 401 || error.status === 403 || (error.message && error.message.includes('API key'))) {
+      throw new Error("INVALID_API_KEY");
+    }
     throw error;
   }
 };
