@@ -11,42 +11,61 @@ const SYSTEM_INSTRUCTION = `អ្នកគឺជាអ្នកជំនាញ�
 ៥. រាល់ចម្លើយត្រូវផ្ដល់មកវិញជាទម្រង់ JSON structure តែប៉ុណ្ណោះ។`;
 
 export const analyzeKhmerText = async (text: string): Promise<AnalysisResult> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  const apiKey = process.env.API_KEY;
   
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: `សូមពិនិត្យអត្ថបទនេះ៖ "${text}"`,
-    config: {
-      systemInstruction: SYSTEM_INSTRUCTION,
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          corrections: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                original: { type: Type.STRING, description: "ពាក្យ ឬឃ្លាដើមដែលខុស" },
-                correction: { type: Type.STRING, description: "ពាក្យ ឬឃ្លាដែលត្រឹមត្រូវ" },
-                explanation: { type: Type.STRING, description: "ការពន្យល់ពីមូលហេតុនៃកំហុស" },
-                type: { type: Type.STRING, enum: ['អក្ខរាវិរុទ្ធ', 'វេយ្យាករណ៍', 'កម្រិតភាសា'] }
-              },
-              required: ["original", "correction", "explanation", "type"]
-            }
-          },
-          suggestions: { type: Type.STRING, description: "ការណែនាំបន្ថែមអំពីការសរសេរ" },
-          overallFeedback: { type: Type.STRING, description: "ការវាយតម្លៃជារួមលើអត្ថបទ" },
-          languageLevel: { type: Type.STRING, description: "កម្រិតនៃភាសាដែលប្រើ (ទូទៅ, រាជសព្ទ, ផ្លូវការ ...)" }
-        },
-        required: ["corrections", "suggestions", "overallFeedback", "languageLevel"]
-      }
-    }
-  });
-
-  if (!response.text) {
-    throw new Error("No response from AI");
+  if (!apiKey) {
+    throw new Error("API_KEY មិនត្រូវបានរកឃើញក្នុង Environment Variables ទេ។ សូមកំណត់វាជាមុនសិន។");
   }
 
-  return JSON.parse(response.text) as AnalysisResult;
+  // បង្កើត instance ថ្មីរាល់ពេលហៅ ដើម្បីធានាភាពត្រឹមត្រូវនៃ key
+  const ai = new GoogleGenAI({ apiKey });
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-pro-preview', // ប្តូរមក Pro Preview ដើម្បីសមត្ថភាពខ្ពស់ជាងមុន
+      contents: `សូមពិនិត្យអត្ថបទនេះ៖ "${text}"`,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            corrections: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  original: { type: Type.STRING },
+                  correction: { type: Type.STRING },
+                  explanation: { type: Type.STRING },
+                  type: { type: Type.STRING, enum: ['អក្ខរាវិរុទ្ធ', 'វេយ្យាករណ៍', 'កម្រិតភាសា'] }
+                },
+                required: ["original", "correction", "explanation", "type"]
+              }
+            },
+            suggestions: { type: Type.STRING },
+            overallFeedback: { type: Type.STRING },
+            languageLevel: { type: Type.STRING }
+          },
+          required: ["corrections", "suggestions", "overallFeedback", "languageLevel"]
+        }
+      }
+    });
+
+    const outputText = response.text;
+    if (!outputText) {
+      throw new Error("ប្រព័ន្ធមិនបានផ្ដល់ចម្លើយមកវិញទេ។");
+    }
+
+    return JSON.parse(outputText) as AnalysisResult;
+  } catch (error: any) {
+    console.error("Gemini API Error:", error);
+    if (error.message?.includes("403")) {
+      throw new Error("API Key របស់អ្នកមិនទាន់បានបើកដំណើរការ Generative Language API ឬមានបញ្ហាកំណត់សិទ្ធិ។");
+    }
+    if (error.message?.includes("404")) {
+      throw new Error("មិនអាចរកឃើញ Model 'gemini-3-pro-preview' ទេ។");
+    }
+    throw error;
+  }
 };

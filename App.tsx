@@ -38,9 +38,9 @@ const App: React.FC = () => {
       const data = await analyzeKhmerText(inputText);
       setResult(data);
       setStatus(AnalysisStatus.SUCCESS);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ប្រព័ន្ធ។ សូមពិនិត្យមើល API Key ក្នុង Environment Variables របស់អ្នក។');
+      setError(err.message || 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ប្រព័ន្ធ។ សូមពិនិត្យមើល API Key ក្នុង Environment Variables របស់អ្នក។');
       setStatus(AnalysisStatus.ERROR);
     }
   };
@@ -162,7 +162,7 @@ const App: React.FC = () => {
             </div>
           </div>
           {error && (
-            <div className="bg-red-500 text-white p-4 rounded-2xl text-sm flex items-center gap-3 shadow-lg animate-bounce">
+            <div className="bg-red-500 text-white p-4 rounded-2xl text-sm flex items-center gap-3 shadow-lg">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0">
                 <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.289 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.401 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
               </svg>
