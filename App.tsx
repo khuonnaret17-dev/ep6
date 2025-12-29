@@ -40,7 +40,7 @@ const App: React.FC = () => {
       setStatus(AnalysisStatus.SUCCESS);
     } catch (err) {
       console.error(err);
-      setError('មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ប្រព័ន្ធ។ សូមព្យាយាមម្ដងទៀត។');
+      setError('មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ប្រព័ន្ធ។ សូមពិនិត្យមើល API Key ក្នុង Environment Variables របស់អ្នក។');
       setStatus(AnalysisStatus.ERROR);
     }
   };
@@ -276,13 +276,16 @@ const App: React.FC = () => {
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12 px-4 text-center border-t border-slate-800 mt-12">
         <div className="max-w-2xl mx-auto">
-          <p className="text-lg font-bold text-white mb-2">កម្មវិធីពិនិត្យអក្ខរាវិរុទ្ធខ្មែរ</p>
+          <p className="text-lg font-bold text-white mb-2 uppercase tracking-widest">Khmer</p>
           <p className="text-sm opacity-60 leading-relaxed">
             រៀបចំឡើងដោយប្រើបច្ចេកវិទ្យា Gemini 3.0 Pro AI និងផ្អែកលើគោលការណ៍វិស័យភាសាខ្មែររបស់សម្ដេចព្រះសង្ឃរាជ ជួន ណាត ដើម្បីគាំទ្រដល់ការប្រើប្រាស់អក្សរសាស្ត្រខ្មែរឱ្យបានត្រឹមត្រូវបំផុតក្នុងសម័យឌីជីថល។
           </p>
-          <div className="mt-8 flex justify-center gap-6 opacity-40">
-            <div className="h-0.5 w-12 bg-white rounded-full"></div>
-            <div className="h-0.5 w-12 bg-white rounded-full"></div>
+          <div className="mt-8 flex flex-col items-center gap-2 opacity-40">
+            <span className="text-xs font-mono">Project ID: 401971266244</span>
+            <div className="flex gap-6">
+              <div className="h-0.5 w-12 bg-white rounded-full"></div>
+              <div className="h-0.5 w-12 bg-white rounded-full"></div>
+            </div>
           </div>
         </div>
       </footer>

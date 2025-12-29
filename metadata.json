@@ -1,5 +1,7 @@
+
 {
-  "name": "Khmer Linguist Expert",
+  "name": "Khmer",
   "description": "An advanced Khmer spelling and grammar checker based on Chuon Nath's dictionary and modern linguistics rules, providing detailed corrections and stylistic suggestions.",
+  "project_number": "401971266244",
   "requestFramePermissions": []
 }
